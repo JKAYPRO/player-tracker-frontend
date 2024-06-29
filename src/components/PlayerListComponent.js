@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import Modal from 'react-modal';
-import './PlayerListComponent.css';
-
-Modal.setAppElement('#root');  // Add this line for accessibility
+import { useNavigate } from 'react-router-dom';
+import '../App.css';
 
 const PlayerListComponent = () => {
     const [players, setPlayers] = useState([]);
-    const [filteredPlayers, setFilteredPlayers] = useState([]);
-    const [selectedCountry, setSelectedCountry] = useState('');
     const [trackedPlayers, setTrackedPlayers] = useState([]);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [selectedPlayer, setSelectedPlayer] = useState(null);
+    const [selectedPlayers, setSelectedPlayers] = useState([]);
+    const [countryFilter, setCountryFilter] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlayers = async () => {
@@ -23,129 +20,178 @@ const PlayerListComponent = () => {
                 const csv = decoder.decode(result.value);
                 const results = Papa.parse(csv, { header: true });
                 setPlayers(results.data);
-                setFilteredPlayers(results.data);
             } catch (error) {
-                console.error("Error fetching and parsing CSV data:", error);
+                console.error('Error fetching and parsing CSV file:', error);
             }
         };
         fetchPlayers();
     }, []);
 
-    const handleCountryChange = (e) => {
-        const country = e.target.value;
-        setSelectedCountry(country);
-        if (country) {
-            const filtered = players.filter(player => player.Ctry && player.Ctry.toLowerCase().includes(country.toLowerCase()));
-            setFilteredPlayers(filtered);
-        } else {
-            setFilteredPlayers(players);
-        }
-    };
+    useEffect(() => {
+        const savedTrackedPlayers = JSON.parse(localStorage.getItem('trackedPlayers')) || [];
+        setTrackedPlayers(savedTrackedPlayers);
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+    }, [trackedPlayers]);
 
     const handleTrackPlayer = (player) => {
-        if (!trackedPlayers.includes(player)) {
+        if (!trackedPlayers.some(tracked => tracked.player_name === player.player_name)) {
             setTrackedPlayers([...trackedPlayers, player]);
         }
     };
 
     const handleUntrackPlayer = (player) => {
-        setTrackedPlayers(trackedPlayers.filter(p => p !== player));
+        setTrackedPlayers(trackedPlayers.filter(tracked => tracked.player_name !== player.player_name));
     };
 
-    const openModal = (player) => {
-        setSelectedPlayer(player);
-        setModalIsOpen(true);
+    const handleSelectPlayer = (player) => {
+        if (selectedPlayers.includes(player)) {
+            setSelectedPlayers(selectedPlayers.filter(p => p !== player));
+        } else {
+            setSelectedPlayers([...selectedPlayers, player]);
+        }
     };
 
-    const closeModal = () => {
-        setModalIsOpen(false);
-        setSelectedPlayer(null);
-    };
-
-    // Top 10 GB&I based on WAGR Rank
-    const top10GBI = players
-        .filter(player => ['Scotland', 'Wales', 'Ireland', 'England'].includes(player.Ctry))
-        .sort((a, b) => parseInt(a.wagr_rank, 10) - parseInt(b.wagr_rank, 10))
-        .slice(0, 10);
+    const filteredPlayers = players.filter(player => countryFilter === '' || player.Ctry === countryFilter);
 
     return (
-        <div className="container">
+        <div className="container mt-5">
             <h1>GB&I Player Tracker</h1>
-            <div className="top-10-gbi">
-                <h3>Top 10 GB&I</h3>
-                <ul>
-                    {top10GBI.map((player, index) => (
-                        <li key={index} onClick={() => openModal(player)}>
-                            {player.player_name} - WAGR Rank: {player.wagr_rank}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className="filters">
-                <label>
-                    Country:
-                    <select value={selectedCountry} onChange={handleCountryChange}>
-                        <option value="">All</option>
-                        {Array.from(new Set(players.map(player => player.Ctry)))
-                            .map((country, index) => (
-                                <option key={index} value={country}>{country}</option>
-                            ))}
-                    </select>
-                </label>
-            </div>
-            <div className="content">
-                <div className="player-list-section">
-                    <h3>Player List</h3>
-                    <ul className="player-list">
-                        {filteredPlayers.map((player, index) => (
-                            <li key={index} className="player-item" onClick={() => openModal(player)}>
-                                <strong>{player.player_name}</strong><br />
-                                Country: {player.Ctry}<br />
-                                <button onClick={(e) => { e.stopPropagation(); handleTrackPlayer(player); }}>Track Player</button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="tracked-players">
-                    <h3>Tracked Players</h3>
-                    <ul>
-                        {trackedPlayers.map((player, index) => (
-                            <li key={index} className="player-item" onClick={() => openModal(player)}>
-                                <strong>{player.player_name}</strong><br />
-                                Country: {player.Ctry}<br />
-                                <button onClick={(e) => { e.stopPropagation(); handleUntrackPlayer(player); }}>Remove</button>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Player Details"
-                className="modal"
-                overlayClassName="modal-overlay"
-            >
-                {selectedPlayer && (
-                    <div className="modal-content">
-                        <h2>{selectedPlayer.player_name}</h2>
-                        <div className="player-details">
-                            <p><strong>Sample Size:</strong> {selectedPlayer.sample_size}</p>
-                            <p><strong>School:</strong> {selectedPlayer.school}</p>
-                            <p><strong>DG Rank:</strong> {selectedPlayer.dg_rank}</p>
-                            <p><strong>DG Change:</strong> {selectedPlayer.dg_change}</p>
-                            <p><strong>WAGR Rank:</strong> {selectedPlayer.wagr_rank}</p>
-                            <p><strong>WAGR Change:</strong> {selectedPlayer.wagr_change}</p>
-                            <p><strong>DG Index:</strong> {selectedPlayer.dg_index}</p>
-                            <p><strong>Rank:</strong> {selectedPlayer.Rank}</p>
-                            <p><strong>Move:</strong> {selectedPlayer.Move}</p>
-                            <p><strong>Country:</strong> {selectedPlayer.Ctry}</p>
+            <div className="row">
+                <div className="col-md-12 mb-4">
+                    <div className="card">
+                        <div className="card-body">
+                            <h3 className="card-title">Players</h3>
+                            <div className="mb-3">
+                                <label htmlFor="countryFilter" className="form-label">Filter by Country:</label>
+                                <select
+                                    id="countryFilter"
+                                    className="form-select"
+                                    value={countryFilter}
+                                    onChange={e => setCountryFilter(e.target.value)}
+                                >
+                                    <option value="">All</option>
+                                    {Array.from(new Set(players.map(player => player.Ctry))).map(country => (
+                                        <option key={country} value={country}>
+                                            {country}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Select</th>
+                                        <th scope="col">Player</th>
+                                        <th scope="col">Country</th>
+                                        <th scope="col">School</th>
+                                        <th scope="col">WAGR Rank</th>
+                                        <th scope="col">DG Rank</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredPlayers.map(player => (
+                                        <tr key={player.player_name}>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedPlayers.includes(player)}
+                                                    onChange={() => handleSelectPlayer(player)}
+                                                />
+                                            </td>
+                                            <td onClick={() => navigate(`/player/${player.player_name}`)}>
+                                                {player.player_name}
+                                                {trackedPlayers.some(tracked => tracked.player_name === player.player_name) && (
+                                                    <span className="badge bg-success ms-2">Tracking</span>
+                                                )}
+                                            </td>
+                                            <td>{player.Ctry}</td>
+                                            <td>{player.school}</td>
+                                            <td>{player.wagr_rank}</td>
+                                            <td>{player.dg_rank}</td>
+                                            <td>
+                                                {trackedPlayers.some(tracked => tracked.player_name === player.player_name) ? (
+                                                    <button
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleUntrackPlayer(player);
+                                                        }}
+                                                    >
+                                                        Untrack
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className="btn btn-primary btn-sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleTrackPlayer(player);
+                                                        }}
+                                                    >
+                                                        Track
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {selectedPlayers.length > 0 && (
+                                <button
+                                    className="btn btn-info mt-3"
+                                    onClick={() => navigate('/compare', { state: { selectedPlayers } })}
+                                >
+                                    Compare Selected Players
+                                </button>
+                            )}
                         </div>
-                        <button onClick={closeModal} className="close-modal-button">Close</button>
                     </div>
-                )}
-            </Modal>
+                </div>
+                <div className="col-md-12 mb-4">
+                    <div className="card">
+                        <div className="card-body">
+                            <h3 className="card-title">Tracked Players</h3>
+                            <table className="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Player</th>
+                                        <th scope="col">Country</th>
+                                        <th scope="col">School</th>
+                                        <th scope="col">WAGR Rank</th>
+                                        <th scope="col">DG Rank</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {trackedPlayers.map(player => (
+                                        <tr key={player.player_name} onClick={() => navigate(`/player/${player.player_name}`)}>
+                                            <td>{player.player_name}</td>
+                                            <td>{player.Ctry}</td>
+                                            <td>{player.school}</td>
+                                            <td>{player.wagr_rank}</td>
+                                            <td>{player.dg_rank}</td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleUntrackPlayer(player);
+                                                    }}
+                                                >
+                                                    Untrack
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
