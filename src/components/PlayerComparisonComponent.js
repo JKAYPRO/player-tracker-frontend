@@ -1,26 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { FlagIcon } from 'react-flag-kit';
 import '../styles/App.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PlayerComparisonComponent = () => {
     const { state } = useLocation();
-    const { selectedPlayers: initialSelectedPlayers } = state || { selectedPlayers: [] };
-    const [selectedPlayers, setSelectedPlayers] = useState(initialSelectedPlayers || []);
+    const { selectedPlayers } = state || { selectedPlayers: [] };
     const navigate = useNavigate();
-
-    useEffect(() => {
-        // Save the selected players to localStorage
-        localStorage.setItem('selectedPlayers', JSON.stringify(selectedPlayers));
-    }, [selectedPlayers]);
-
-    const handleUnselectPlayer = (playerName) => {
-        const updatedPlayers = selectedPlayers.filter(player => player.player_name !== playerName);
-        setSelectedPlayers(updatedPlayers);
-    };
 
     const chartData = {
         labels: selectedPlayers.map(player => player.player_name),
@@ -56,6 +46,21 @@ const PlayerComparisonComponent = () => {
         },
     };
 
+    const handleDeselectPlayer = (player) => {
+        const newSelectedPlayers = selectedPlayers.filter(p => p.player_name !== player.player_name);
+        navigate('/compare', { state: { selectedPlayers: newSelectedPlayers } });
+    };
+
+    const getCountryCode = (country) => {
+        const countryCodes = {
+            'Scotland': 'GB-SCT',
+            'Ireland': 'IE',
+            'England': 'GB-ENG',
+            'Wales': 'GB-WLS'
+        };
+        return countryCodes[country];
+    };
+
     return (
         <div className="container mt-5">
             <button className="btn btn-secondary mb-4" onClick={() => navigate('/')}>Back to List</button>
@@ -78,7 +83,9 @@ const PlayerComparisonComponent = () => {
                             {selectedPlayers.map(player => (
                                 <tr key={player.player_name}>
                                     <td>{player.player_name}</td>
-                                    <td>{player.Ctry}</td>
+                                    <td>
+                                        {player.Ctry} <FlagIcon code={getCountryCode(player.Ctry)} size={20} />
+                                    </td>
                                     <td>{player.school}</td>
                                     <td>{player.wagr_rank}</td>
                                     <td>{player.dg_rank}</td>
@@ -86,9 +93,9 @@ const PlayerComparisonComponent = () => {
                                     <td>
                                         <button
                                             className="btn btn-danger btn-sm"
-                                            onClick={() => handleUnselectPlayer(player.player_name)}
+                                            onClick={() => handleDeselectPlayer(player)}
                                         >
-                                            Remove
+                                            Deselect
                                         </button>
                                     </td>
                                 </tr>

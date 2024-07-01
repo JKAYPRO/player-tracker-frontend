@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { useNavigate } from 'react-router-dom';
+import { FlagIcon } from 'react-flag-kit';
 import '../styles/App.css';
 
 const PlayerListComponent = () => {
@@ -62,6 +63,16 @@ const PlayerListComponent = () => {
 
     const filteredPlayers = players.filter(player => countryFilter === '' || player.Ctry === countryFilter);
 
+    const getCountryCode = (country) => {
+        const countryCodes = {
+            'Scotland': 'GB-SCT',
+            'Ireland': 'IE',
+            'England': 'GB-ENG',
+            'Wales': 'GB-WLS'
+        };
+        return countryCodes[country];
+    };
+
     return (
         <div className="container mt-5">
             <h1>GB&I Player Tracker</h1>
@@ -114,7 +125,9 @@ const PlayerListComponent = () => {
                                                     <span className="badge bg-success ms-2">Tracking</span>
                                                 )}
                                             </td>
-                                            <td>{player.Ctry}</td>
+                                            <td>
+                                                {player.Ctry} <FlagIcon code={getCountryCode(player.Ctry)} size={20} />
+                                            </td>
                                             <td>{player.school}</td>
                                             <td>{player.wagr_rank}</td>
                                             <td>{player.dg_rank}</td>
@@ -150,7 +163,7 @@ const PlayerListComponent = () => {
                 </div>
                 <div className="col-md-3 mb-4">
                     <div className="card">
-                    <div className="card-body">
+                        <div className="card-body">
                             <h3 className="card-title">Tracked Players</h3>
                             <ul className="list-group">
                                 {trackedPlayers.map(player => (
@@ -180,10 +193,7 @@ const PlayerListComponent = () => {
                 <div className="fixed-bottom mb-4 ms-4">
                     <button
                         className="btn btn-info"
-                        onClick={() => {
-                            localStorage.removeItem('selectedPlayers');
-                            navigate('/compare', { state: { selectedPlayers } });
-                        }}
+                        onClick={() => navigate('/compare', { state: { selectedPlayers } })}
                     >
                         Compare Selected Players
                     </button>
@@ -194,4 +204,3 @@ const PlayerListComponent = () => {
 };
 
 export default PlayerListComponent;
-

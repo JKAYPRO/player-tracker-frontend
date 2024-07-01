@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
+import { FlagIcon } from 'react-flag-kit';
 import '../styles/App.css';
 
 const PlayerProfileComponent = () => {
@@ -53,12 +54,11 @@ const PlayerProfileComponent = () => {
 
     const handleSaveNote = () => {
         const savedNotes = JSON.parse(localStorage.getItem('notes')) || {};
-        const currentTimestamp = new Date().toLocaleString();
-        savedNotes[playerName] = { note, timestamp: currentTimestamp };
+        const timestamp = new Date().toLocaleString();
+        savedNotes[playerName] = { note, timestamp };
         localStorage.setItem('notes', JSON.stringify(savedNotes));
         setNoteSaved(true);
-        setTimestamp(currentTimestamp);
-        setTimeout(() => setNoteSaved(false), 3000); // Hide the message after 3 seconds
+        setTimestamp(timestamp);
     };
 
     const handlePhotoChange = (e) => {
@@ -79,6 +79,16 @@ const PlayerProfileComponent = () => {
         return <div>Loading...</div>;
     }
 
+    const getCountryCode = (country) => {
+        const countryCodes = {
+            'Scotland': 'GB-SCT',
+            'Ireland': 'IE',
+            'England': 'GB-ENG',
+            'Wales': 'GB-WLS'
+        };
+        return countryCodes[country];
+    };
+
     return (
         <div className="container mt-5">
             <button className="btn btn-secondary mb-4" onClick={() => navigate('/')}>Back to List</button>
@@ -88,7 +98,7 @@ const PlayerProfileComponent = () => {
                         {photo && <img src={photo} alt="Player" className="player-photo" />}
                     </div>
                     <h3 className="card-title text-center">{player.player_name}</h3>
-                    <p className="text-center">Country: {player.Ctry}</p>
+                    <p className="text-center">Country: {player.Ctry} <FlagIcon code={getCountryCode(player.Ctry)} size={20} /></p>
                     <p className="text-center">Current Rank: {player.Rank}</p>
                     <p className="text-center">Divisor: {player.Divisor}</p>
                     <p className="text-center">Points Average: {player["Pts Avg"]}</p>
