@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PlayerListComponent from './components/PlayerListComponent';
 import PlayerProfileComponent from './components/PlayerProfileComponent';
 import PlayerComparisonComponent from './components/PlayerComparisonComponent';
+import './styles/App.css';
 
 function App() {
     return (

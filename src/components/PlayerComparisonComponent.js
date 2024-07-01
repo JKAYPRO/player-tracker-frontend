@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import '../App.css';
+import '../styles/App.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PlayerComparisonComponent = () => {
     const { state } = useLocation();
-    const { selectedPlayers } = state || { selectedPlayers: [] };
+    const { selectedPlayers: initialSelectedPlayers } = state || { selectedPlayers: [] };
+    const [selectedPlayers, setSelectedPlayers] = useState(initialSelectedPlayers || []);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Save the selected players to localStorage
+        localStorage.setItem('selectedPlayers', JSON.stringify(selectedPlayers));
+    }, [selectedPlayers]);
+
+    const handleUnselectPlayer = (playerName) => {
+        const updatedPlayers = selectedPlayers.filter(player => player.player_name !== playerName);
+        setSelectedPlayers(updatedPlayers);
+    };
 
     const chartData = {
         labels: selectedPlayers.map(player => player.player_name),
@@ -60,6 +71,7 @@ const PlayerComparisonComponent = () => {
                                 <th scope="col">WAGR Rank</th>
                                 <th scope="col">DG Rank</th>
                                 <th scope="col">Divisor</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,6 +83,14 @@ const PlayerComparisonComponent = () => {
                                     <td>{player.wagr_rank}</td>
                                     <td>{player.dg_rank}</td>
                                     <td>{player.Divisor}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() => handleUnselectPlayer(player.player_name)}
+                                        >
+                                            Remove
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

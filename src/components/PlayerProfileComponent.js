@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import '../App.css';
+import '../styles/App.css';
 
 const PlayerProfileComponent = () => {
     const { playerName } = useParams();
@@ -9,10 +9,11 @@ const PlayerProfileComponent = () => {
     const [player, setPlayer] = useState(null);
     const [note, setNote] = useState('');
     const [photo, setPhoto] = useState(null);
-    const [players, setPlayers] = useState([]);
+    const [noteSaved, setNoteSaved] = useState(false);
+    const [timestamp, setTimestamp] = useState('');
 
     useEffect(() => {
-        const fetchPlayers = async () => {
+        const fetchPlayerByName = async (playerName) => {
             try {
                 const response = await fetch('/reordered_merged_filtered_player_data.csv');
                 const reader = response.body.getReader();
@@ -20,39 +21,56 @@ const PlayerProfileComponent = () => {
                 const decoder = new TextDecoder('utf-8');
                 const csv = decoder.decode(result.value);
                 const results = Papa.parse(csv, { header: true });
-                setPlayers(results.data);
+                const playerData = results.data.find(player => player.player_name === playerName);
+                return playerData;
             } catch (error) {
                 console.error('Error fetching and parsing CSV file:', error);
             }
         };
-        fetchPlayers();
-    }, []);
+
+        const fetchPlayer = async () => {
+            const playerData = await fetchPlayerByName(playerName);
+            setPlayer(playerData);
+        };
+
+        fetchPlayer();
+    }, [playerName]);
 
     useEffect(() => {
-        if (players.length > 0) {
-            const foundPlayer = players.find(p => p.player_name === playerName);
-            if (foundPlayer) {
-                setPlayer(foundPlayer);
-                const savedNote = localStorage.getItem(`note_${foundPlayer.player_name}`);
-                if (savedNote) setNote(savedNote);
-                const savedPhoto = localStorage.getItem(`photo_${foundPlayer.player_name}`);
-                if (savedPhoto) setPhoto(savedPhoto);
-            }
+        const savedNotes = JSON.parse(localStorage.getItem('notes')) || {};
+        if (playerName in savedNotes) {
+            setNote(savedNotes[playerName].note);
+            setTimestamp(savedNotes[playerName].timestamp);
         }
-    }, [players, playerName]);
+    }, [playerName]);
+
+    useEffect(() => {
+        const savedPhotos = JSON.parse(localStorage.getItem('photos')) || {};
+        if (savedPhotos[playerName]) {
+            setPhoto(savedPhotos[playerName]);
+        }
+    }, [playerName]);
 
     const handleSaveNote = () => {
-        localStorage.setItem(`note_${player.player_name}`, note);
+        const savedNotes = JSON.parse(localStorage.getItem('notes')) || {};
+        const currentTimestamp = new Date().toLocaleString();
+        savedNotes[playerName] = { note, timestamp: currentTimestamp };
+        localStorage.setItem('notes', JSON.stringify(savedNotes));
+        setNoteSaved(true);
+        setTimestamp(currentTimestamp);
+        setTimeout(() => setNoteSaved(false), 3000); // Hide the message after 3 seconds
     };
 
-    const handlePhotoChange = (event) => {
-        const file = event.target.files[0];
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const savedPhotos = JSON.parse(localStorage.getItem('photos')) || {};
+            savedPhotos[playerName] = reader.result;
+            localStorage.setItem('photos', JSON.stringify(savedPhotos));
+            setPhoto(reader.result);
+        };
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setPhoto(e.target.result);
-                localStorage.setItem(`photo_${player.player_name}`, e.target.result);
-            };
             reader.readAsDataURL(file);
         }
     };
@@ -71,10 +89,9 @@ const PlayerProfileComponent = () => {
                     </div>
                     <h3 className="card-title text-center">{player.player_name}</h3>
                     <p className="text-center">Country: {player.Ctry}</p>
-                    <p className="text-center">WAGR Rank: {player.wagr_rank}</p>
-                    <p className="text-center">DG Rank: {player.dg_rank}</p>
-                    <p className="text-center">School: {player.school}</p>
-                    <p className="text-center">Sample Size: {player.sample_size}</p>
+                    <p className="text-center">Current Rank: {player.Rank}</p>
+                    <p className="text-center">Divisor: {player.Divisor}</p>
+                    <p className="text-center">Points Average: {player["Pts Avg"]}</p>
                     <div className="mb-3">
                         <label htmlFor="playerNote" className="form-label">Notes:</label>
                         <textarea
@@ -85,6 +102,7 @@ const PlayerProfileComponent = () => {
                             onChange={(e) => setNote(e.target.value)}
                         ></textarea>
                         <button className="btn btn-primary mt-2" onClick={handleSaveNote}>Save Note</button>
+                        {noteSaved && <p className="text-success mt-2">Note saved successfully at {timestamp}</p>}
                     </div>
                     <div className="mb-3">
                         <label htmlFor="playerPhoto" className="form-label">Photo:</label>

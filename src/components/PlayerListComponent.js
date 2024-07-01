@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { useNavigate } from 'react-router-dom';
-import '../App.css';
+import '../styles/App.css';
 
 const PlayerListComponent = () => {
     const [players, setPlayers] = useState([]);
@@ -150,7 +150,7 @@ const PlayerListComponent = () => {
                 </div>
                 <div className="col-md-3 mb-4">
                     <div className="card">
-                        <div className="card-body">
+                    <div className="card-body">
                             <h3 className="card-title">Tracked Players</h3>
                             <ul className="list-group">
                                 {trackedPlayers.map(player => (
@@ -180,7 +180,10 @@ const PlayerListComponent = () => {
                 <div className="fixed-bottom mb-4 ms-4">
                     <button
                         className="btn btn-info"
-                        onClick={() => navigate('/compare', { state: { selectedPlayers } })}
+                        onClick={() => {
+                            localStorage.removeItem('selectedPlayers');
+                            navigate('/compare', { state: { selectedPlayers } });
+                        }}
                     >
                         Compare Selected Players
                     </button>
@@ -191,3 +194,4 @@ const PlayerListComponent = () => {
 };
 
 export default PlayerListComponent;
+
