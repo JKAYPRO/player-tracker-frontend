@@ -109,6 +109,12 @@ const PlayerComparisonComponent = () => {
             ) : (
                 <p>No players selected for comparison.</p>
             )}
+            <button
+                className="btn btn-danger mt-4"
+                onClick={() => navigate('/compare', { state: { selectedPlayers: [] } })}
+            >
+                Deselect All
+            </button>
         </div>
     );
 };

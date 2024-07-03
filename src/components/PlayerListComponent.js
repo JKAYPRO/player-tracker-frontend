@@ -106,6 +106,7 @@ const PlayerListComponent = () => {
                                         <th scope="col">School</th>
                                         <th scope="col">WAGR Rank</th>
                                         <th scope="col">DG Rank</th>
+                                        <th scope="col">Divisor</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -131,6 +132,7 @@ const PlayerListComponent = () => {
                                             <td>{player.school}</td>
                                             <td>{player.wagr_rank}</td>
                                             <td>{player.dg_rank}</td>
+                                            <td>{player.Divisor}</td>
                                             <td>
                                                 {trackedPlayers.some(tracked => tracked.player_name === player.player_name) ? (
                                                     <button

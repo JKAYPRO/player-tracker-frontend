@@ -1,39 +1,39 @@
-player_name,sample_size,school,dg_rank,dg_change,wagr_rank,wagr_change,dg_index,Rank,Move,Ctry
-"scott, calum",150,texas tech,15,15,34,4,1.322415237,28,6,Scotland
-"kennedy, max",150,louisville,102,5,74,0,0.302213284,68,6,Ireland
-"hopkins, will",150,—,118,33,93,8,0.208096255,83,10,England
-"ashfield, james",150,—,126,33,43,4,0.138481958,35,8,Wales
-"mcclean, matthew",150,—,149,-9,99,-14,0.009182494,91,8,Ireland
-"crockett, charlie",150,missouri,178,4,126,3,-0.109484609,120,6,England
-"adam, cameron",150,northwestern,213,62,273,39,-0.276502398,261,12,Scotland
-"conroy, paul",150,chattanooga,245,7,284,1,-0.389404413,270,14,Ireland
-"sullivan, joe",150,florida gulf coast u,249,6,287,2,-0.406420169,275,12,England
-"rafferty, caolan",150,—,261,121,97,26,-0.451044335,90,7,Ireland
-"smith, harley",150,—,363,129,642,232,-0.777896023,636,6,England
-"hill, josh",150,tennessee,378,97,599,188,-0.823300731,592,7,England
-"dhaubhadel, melan",150,ulm,396,-4,754,12,-0.868333037,729,25,England
-"gough, conor",150,charlotte,432,-3,340,5,-0.990034986,329,11,England
-"davies, archie",150,east tennessee st.,449,8,429,-26,-1.056927753,425,4,Wales
-"nolan, liam",146,—,375,1,125,1,-0.818546817,122,3,Ireland
-"higgins, thomas",145,clemson,479,47,519,27,-1.131681987,508,11,Ireland
-"partridge, benjamin",142,san francisco,403,-6,445,5,-0.888957305,436,9,England
-"crockett, harry",139,nebraska,465,64,511,38,-1.09329418,503,8,England
-"cave, seb",135,uab,291,134,482,441,-0.590130979,460,22,England
-"forster, charlie",121,long beach state,151,-22,414,-27,0.002525563,403,11,England
-"baker, eliot",113,—,431,9,691,6,-0.988363027,677,14,England
-"bigham, jack",112,florida state,99,4,75,1,0.308320027,69,6,England
-"easterbrook, sam",106,purdue,443,0,653,-2,-1.032613341,647,6,England
-"little, zach",99,central arkansas,499,0,959,0,-1.193132428,964,-5,England
-"graham, connor",97,—,191,22,233,13,-0.195173273,226,7,Scotland
-"dodd-berry, matthew",95,east tennessee st.,131,22,221,9,0.117300233,211,10,England
-"clemons, dominic",90,stetson,85,9,321,30,0.434164471,310,11,England
-"weaver, tyler",87,florida state,140,6,107,2,0.071736631,99,8,England
-"kim, kris",82,—,423,-5,378,2,-0.967906893,367,11,England
-"bolton, ben",81,—,485,8,573,2,-1.146705002,555,18,England
-"claridge, james",63,—,300,4,227,-1,-0.610294331,217,10,England
-"poulter, luke",62,florida,194,3,395,0,-0.213207611,388,7,England
-"stockdale, mark",62,central arkansas,436,-55,649,-61,-1.000904288,640,9,England
-"bowen, tomi",59,—,359,-46,251,-23,-0.762705479,243,8,Wales
-"osborne, tom",44,—,329,-1,631,-19,-0.686620336,624,7,England
-"bale, jonathan",38,—,137,5,415,-1,0.087871014,413,2,Wales
-"lent, oscar",24,—,470,3,710,-5,-1.10817883,698,12,England
+,player_name,sample_size,school,dg_rank,dg_change,wagr_rank,wagr_change,dg_index,Rank,Move,Ctry,Divisor
+0,"scott, calum",150,texas tech,15,15,34,4,1.322415237,28,6,Scotland,29.9811
+1,"kennedy, max",150,louisville,102,5,74,0,0.302213284,68,6,Ireland,27.9811
+2,"hopkins, will",150,—,118,33,93,8,0.208096255,83,10,England,20.6981
+3,"ashfield, james",150,—,126,33,43,4,0.138481958,35,8,Wales,19.9811
+4,"mcclean, matthew",150,—,149,-9,99,-14,0.009182494,91,8,Ireland,25.6603
+5,"crockett, charlie",150,missouri,178,4,126,3,-0.109484609,120,6,England,
+6,"adam, cameron",150,northwestern,213,62,273,39,-0.276502398,261,12,Scotland,26.0754
+7,"conroy, paul",150,chattanooga,245,7,284,1,-0.389404413,270,14,Ireland,
+8,"sullivan, joe",150,florida gulf coast u,249,6,287,2,-0.406420169,275,12,England,24.132
+9,"rafferty, caolan",150,—,261,121,97,26,-0.451044335,90,7,Ireland,9.5094
+10,"smith, harley",150,—,363,129,642,232,-0.777896023,636,6,England,27.4905
+11,"hill, josh",150,tennessee,378,97,599,188,-0.823300731,592,7,England,15.8113
+12,"dhaubhadel, melan",150,ulm,396,-4,754,12,-0.868333037,729,25,England,19.6603
+13,"gough, conor",150,charlotte,432,-3,340,5,-0.990034986,329,11,England,21.8679
+14,"davies, archie",150,east tennessee st.,449,8,429,-26,-1.056927753,425,4,Wales,21.5283
+15,"nolan, liam",146,—,375,1,125,1,-0.818546817,122,3,Ireland,13.6037
+16,"higgins, thomas",145,clemson,479,47,519,27,-1.131681987,508,11,Ireland,23.8301
+17,"partridge, benjamin",142,san francisco,403,-6,445,5,-0.888957305,436,9,England,22.2641
+18,"crockett, harry",139,nebraska,465,64,511,38,-1.09329418,503,8,England,21.4716
+19,"cave, seb",135,uab,291,134,482,441,-0.590130979,460,22,England,21.283
+20,"forster, charlie",121,long beach state,151,-22,414,-27,0.002525563,403,11,England,27.2452
+21,"baker, eliot",113,—,431,9,691,6,-0.988363027,677,14,England,23.7358
+22,"bigham, jack",112,florida state,99,4,75,1,0.308320027,69,6,England,21.3207
+23,"easterbrook, sam",106,purdue,443,0,653,-2,-1.032613341,647,6,England,24.2641
+24,"little, zach",99,central arkansas,499,0,959,0,-1.193132428,964,-5,England,22.3207
+25,"graham, connor",97,—,191,22,233,13,-0.195173273,226,7,Scotland,16.4339
+26,"dodd-berry, matthew",95,east tennessee st.,131,22,221,9,0.117300233,211,10,England,26.3396
+27,"clemons, dominic",90,stetson,85,9,321,30,0.434164471,310,11,England,25.3018
+28,"weaver, tyler",87,florida state,140,6,107,2,0.071736631,99,8,England,19.0943
+29,"kim, kris",82,—,423,-5,378,2,-0.967906893,367,11,England,23.0188
+30,"bolton, ben",81,—,485,8,573,2,-1.146705002,555,18,England,21.1886
+31,"claridge, james",63,—,300,4,227,-1,-0.610294331,217,10,England,14.3584
+32,"poulter, luke",62,florida,194,3,395,0,-0.213207611,388,7,England,17.3207
+33,"stockdale, mark",62,central arkansas,436,-55,649,-61,-1.000904288,640,9,England,24.1509
+34,"bowen, tomi",59,—,359,-46,251,-23,-0.762705479,243,8,Wales,19.3962
+35,"osborne, tom",44,—,329,-1,631,-19,-0.686620336,624,7,England,15
+36,"bale, jonathan",38,—,137,5,415,-1,0.087871014,413,2,Wales,10.6792
+37,"lent, oscar",24,—,470,3,710,-5,-1.10817883,698,12,England,12
