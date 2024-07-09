@@ -9,6 +9,7 @@ const PlayerListComponent = () => {
     const [trackedPlayers, setTrackedPlayers] = useState([]);
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [countryFilter, setCountryFilter] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: 'wagr_rank', direction: 'ascending' });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,7 +21,9 @@ const PlayerListComponent = () => {
                 const decoder = new TextDecoder('utf-8');
                 const csv = decoder.decode(result.value);
                 const results = Papa.parse(csv, { header: true });
-                setPlayers(results.data);
+                const playersData = results.data;
+                setPlayers(playersData);
+                setSortConfig({ key: 'wagr_rank', direction: 'ascending' });
             } catch (error) {
                 console.error('Error fetching and parsing CSV file:', error);
             }
@@ -61,7 +64,23 @@ const PlayerListComponent = () => {
         }
     };
 
-    const filteredPlayers = players.filter(player => countryFilter === '' || player.Ctry === countryFilter);
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedPlayers = [...players].sort((a, b) => {
+        if (sortConfig.direction === 'ascending') {
+            return a[sortConfig.key] - b[sortConfig.key];
+        } else {
+            return b[sortConfig.key] - a[sortConfig.key];
+        }
+    });
+
+    const filteredPlayers = sortedPlayers.filter(player => countryFilter === '' || player.Ctry === countryFilter);
 
     const getCountryCode = (country) => {
         const countryCodes = {
@@ -101,12 +120,12 @@ const PlayerListComponent = () => {
                                 <thead>
                                     <tr>
                                         <th scope="col">Select</th>
-                                        <th scope="col">Player</th>
-                                        <th scope="col">Country</th>
-                                        <th scope="col">School</th>
-                                        <th scope="col">WAGR Rank</th>
-                                        <th scope="col">DG Rank</th>
-                                        <th scope="col">Divisor</th>
+                                        <th scope="col" onClick={() => handleSort('player_name')}>Player</th>
+                                        <th scope="col" onClick={() => handleSort('Ctry')}>Country</th>
+                                        <th scope="col" onClick={() => handleSort('school')}>School</th>
+                                        <th scope="col" onClick={() => handleSort('wagr_rank')}>WAGR Rank</th>
+                                        <th scope="col" onClick={() => handleSort('dg_rank')}>DG Rank</th>
+                                        <th scope="col" onClick={() => handleSort('Divisor')}>Divisor</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
